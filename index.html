@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/style.css">
+    <title>Rock Paper Scissor</title>
+</head>
+<body>
+    <header id="header">
+
+    </header>
+    <div id="main-container">
+        <div id="second-container">
+            <div id="title-container">
+                <h2>Computer</h2>
+                <h2>You</h2>
+            </div>
+            
+            <div id="played-container">
+                <div id="computer-played"></div>
+                <div id="user-played"></div>
+            </div>
+            
+            <div id="counters-container">
+                <div id="score-container">
+                    <div id="computer-score">
+                        <div>Computer Score:</div>
+                        <p id="computer-input">1</p>
+                    </div>
+                    
+                    
+                    <div id="your-score">
+                        <div>Your Score:</div>
+                        <p id="your-input">1</p>
+                    </div>      
+                </div>
+                <div id="round-container">
+                    <p>Round:</p>
+                    <p id="round-input">2</p>
+                </div>
+            </div>
+            
+            
+            <div id="button-container">
+                <div id="game-buttons">
+                    <button value="3" class="buttons play-button" id="rock-button">Rock</button>
+                    <button value="2" class="buttons play-button" id="paper-button">Paper</button>
+                    <button value="1" class="buttons play-button" id="scissor-button">Scissor</button>
+                </div>
+                <div id="new-round">
+                    <label id="round-label" for="rounds">Rounds:</label>
+                    <input type="text" id="rounds" name="rounds">
+                    <button class="buttons admin-buttons" id="new-game-button" value=4>New Game</button>
+                </div>
+                <div id="cancel-container">
+                    <button class="buttons admin-buttons" id="cancel-button" value=5>Cancel Game</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="scripts/script.js"></script>
+</body>
+</html>
