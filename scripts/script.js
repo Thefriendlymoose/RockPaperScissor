@@ -5,70 +5,87 @@ const rock = 3;
 const buttons = document.querySelectorAll("button");
 const newGameButton = document.getElementById("new-game-button");
 
+const compImgContainer = document.getElementById("computer-played");
+const userImgContainer = document.getElementById("user-played");
+const banner = document.getElementById("announcement");
+const roundValue = document.getElementById("round-input")
+const compScore = document.getElementById("computer-input");
+const userScore = document.getElementById("your-input");
+
+const cancelButton = document.getElementById("cancel-button");
+
+let totalUserScore = 0;
+let totalCompScore = 0;
 
 
 
 function computerPlay(){
-
-    //clear computer image
-
     const rockPaperScissor = [1, 2, 3];
     const randomPlay = rockPaperScissor[Math.floor(Math.random() * rockPaperScissor.length)];
-    
-    if(randomPlay === scissors){
-        // display scissors
-    } else if(randomPlay === paper){
-        //display paper
-    } else if (randomPlay === rock){
-        //display rock
-    }
     
     return randomPlay;
 }
 
-function userPlay(play){
-
-    //clear user image
-
+function computerDisplay(play){
+    if(compImgContainer.firstChild){
+        compImgContainer.removeChild(compImgContainer.firstChild);
+    }
+    
+    let img = document.createElement("img");
+    img.classList.add("played-images");
     if(play === scissors){
-        // play scissors
+        img.src="images/scissors.png"
+        compImgContainer.appendChild(img);
     } else if(play === paper){
-        //play paper
+        img.src="images/paper.png"
+        compImgContainer.appendChild(img);
     } else if (play === rock){
-        //play rock
+        img.src="images/rock.png"
+        compImgContainer.appendChild(img);
+    }
+}
+
+function userDisplay(play){
+    if(userImgContainer.firstChild){
+        userImgContainer.removeChild(userImgContainer.firstChild);
+    }
+    
+    let img = document.createElement("img");
+    img.classList.add("played-images");
+    if(play === scissors){
+        img.src="images/scissors.png"
+        userImgContainer.appendChild(img);
+    } else if(play === paper){
+        img.src="images/paper.png"
+        userImgContainer.appendChild(img);
+    } else if (play === rock){
+        img.src="images/rock.png"
+        userImgContainer.appendChild(img);
     }
 }
 
 function startNewGame(){
     const inputValue = document.getElementById("rounds").value;
-    const roundValue = document.getElementById("round-input")
-    const compScore = document.getElementById("computer-input");
-    const userScore = document.getElementById("your-input");
-
-    roundValue.textContent = "";
-    compScore.textContent = "";
-    userScore.textContent = "";
-
-    playNewGame(inputValue);
+    
+    resetGame();
+    playNewGame(inputValue, compScore, userScore, roundValue);
+    
  
 }
 
-async function playNewGame(rounds){
-    let userScore = 0;
-    let compScore = 0;
-    let round = 0;
+async function playNewGame(rounds, compScoreElement, userScoreElement, roundElement){
 
-    const roundElement = document.getElementById("round-input")
+    let round = 0;
 
     for(let i = 0; i<rounds; i++){
         round++;
-        roundElement.textContent = round;
+        roundElement.textContent = `${round}/${rounds}`;
 
          let myPromise = new Promise((resolve, reject) => {
             buttons.forEach(button => {
                 button.addEventListener("click",(e) => {
-                if(parseInt(e.target.value) === 5){
-                    reject(Error("Game Cancelled"));
+                if(parseInt(e.target.value) === 5 || parseInt(e.target.value) === 4) {
+                    reject(parseInt(e.target.value));
                 }
                 resolve(parseInt(e.target.value))
                 })
@@ -77,56 +94,84 @@ async function playNewGame(rounds){
         
         await myPromise.then(userAction => {
             playRound(userAction, computerPlay());
-        }, () => i = rounds-1)
+        }, (userAction) => {
+            i = rounds-1
+            if(userAction === 4){
+                startNewGame()
+            } 
+            })
+        compScoreElement.textContent = totalCompScore;
+        userScoreElement.textContent = totalUserScore;
     }
-
+    
+    checkWinner()
 }
 
 newGameButton.addEventListener("click", () => {
     startNewGame()
+    document.getElementById("rounds").value = "";
 })
 
-
-    buttons.forEach(button => {
-        button.addEventListener("click",(e) => {
-        return parseInt(e.target.value)
-        })
-    });
-
-
-
-
 function playRound(userSelection, computerSelection){    
- //   userPlay(userSelection);
-console.log(userSelection);
-console.log(computerSelection);
-/*     switch(true){
-        case compPlay === playerPlay:
-            return null
+    computerDisplay(computerSelection);
+    userDisplay(userSelection);
+
+    switch(true){
+        case computerSelection === userSelection:
+            
         break
-        case compPlay === "ROCK" && playerPlay === "PAPER":
-            return true
+        case computerSelection === 3 && userSelection === 2:
+            totalUserScore += 1;
         break
-        case compPlay === "ROCK" && playerPlay === "SCISSOR":
-            return false
+        case computerSelection === 3 && userSelection === 1:
+            totalCompScore += 1;
         break
-        case compPlay === "PAPER" && playerPlay === "SCISSOR":
-            return true
+        case computerSelection === 2 && userSelection === 1:
+            totalUserScore += 1;
         break
-        case compPlay === "PAPER" && playerPlay === "ROCK":
-            return false
+        case computerSelection === 2 && userSelection === 3:
+            totalCompScore += 1;
         break
-        case compPlay === "SCISSOR" && playerPlay === "ROCK":
-            return true
+        case computerSelection === 1 && userSelection === 3:
+            totalUserScore += 1;
         break
-        case compPlay === "SCISSOR" && playerPlay === "PAPER":
-            return false
+        case computerSelection === 1 && userSelection === 2:
+            totalCompScore += 1;
         break
         
         default:
             return "Incorrect input"
-        break */
-   // }
+        break
+    }
 
 }
 
+cancelButton.addEventListener("click", () => {
+    resetGame();
+});
+
+function checkWinner(){
+    if(totalCompScore===totalUserScore){
+        banner.textContent = "Equal Score: No Winner"
+    } else if(totalCompScore>totalUserScore){
+        banner.textContent = "Computer Wins!"
+    } else if(totalCompScore<totalUserScore){
+        banner.textContent = "You Win!"
+    }
+}
+
+function resetGame(){
+    roundValue.textContent = "";
+    compScore.textContent = "";
+    userScore.textContent = "";
+    banner.textContent = "";
+    if(userImgContainer.firstChild){
+        userImgContainer.removeChild(userImgContainer.firstChild);
+    }
+    if(compImgContainer.firstChild){
+        compImgContainer.removeChild(compImgContainer.firstChild);
+    }
+
+    totalUserScore = 0;
+    totalCompScore = 0;
+}
